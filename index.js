@@ -10,7 +10,7 @@ const lofterCrawler = new Crawler({
     callback : function (error, result, $) {
         const postHtmlContent = $('div.ctc').html();
         const title = $('title').text();
-        const fileName = title.substring(0, title.length - 9).replace('_', '-').replace(' - ', '-').replace('.', '-') + '.md';
+        const fileName = title.substring(0, title.length - 9).replace('_', '-').replace(' - ', '-').replace(/\./g, '-') + '.md';
         const postMarkdown = toMarkdown(postHtmlContent);
         console.log('Writing file: posts/' + fileName);
         fs.writeFileSync("posts/" + fileName, postMarkdown);
