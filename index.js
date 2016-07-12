@@ -72,7 +72,7 @@ lofterCrawler.queue([ 'http://dudulism.linesh.tw/post/1d7a1323_ba61374',
   'http://dudulism.linesh.tw/post/1d7a1323_8944de0',
   'http://dudulism.linesh.tw/post/1d7a1323_8944de1',
   'http://dudulism.linesh.tw/post/1d7a1323_8944de2' ])
-// These links are crawled someone how by the following scripts:
+// These links are pre-crawled someohow by the following scripts:
 
 const crawledPages = [];
 new Crawler({
