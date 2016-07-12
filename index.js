@@ -3,55 +3,17 @@ const toMarkdown = require('html-md');
 const fs = require('fs')
 
 const links = [];
-const crawledPages = [];
 const postLinkRegex = '/http:\/\/dudulism\.linesh\.tw\/post\/[a-z0-9]{8}_[a-z0-9]{7}/';
-//
-// const lofterCrawler = new Crawler({
-//     maxConnections : 10,
-//     callback : function (error, result, $) {
-//         $('a').each(function(index, alink) {
-//             // $ is Cheerio by default
-//             // a lean implementation of core jQuery designed specifically for the server
-//             let toQueueUrl = $(alink).attr('href');
-//
-//             if (toQueueUrl.includes('?page=') && !crawledPages.includes(toQueueUrl)) {
-//                 crawledPages.push(toQueueUrl);
-//                 lofterCrawler.queue(['http://dudulism.linesh.tw/' + toQueueUrl]);
-//                 return ;
-//             }
-//
-//             if (/http:\/\/dudulism\.linesh\.tw\/post\/[a-z0-9]{8}_[a-z0-9]{7}/.test(toQueueUrl)) {
-//                 if (links.indexOf(toQueueUrl) === -1) {
-//                     links.push(toQueueUrl);
-//
-//                     if (links.length === 55) {
-//                         console.log(links);
-//                     }
-//                     //
-//                     // const postHtmlContent = $('div.ctc').html();
-//                     // const title = $('title').text();
-//                     // const postMarkdown = toMarkdown(postHtmlContent);
-//                     // fs.writeFileSync("post/" + title, postMarkdown);
-//                 }
-//             }
-//         })
-//     }
-// });
-
-function allPostsCrawlled() {
-    return links.length === 55;
-}
 
 const lofterCrawler = new Crawler({
     maxConnections : 10,
     callback : function (error, result, $) {
         const postHtmlContent = $('div.ctc').html();
         const title = $('title').text();
-        const fileName = title.substring(0, title.length - 9).replace('_', '-').replace(' - ', '-').replace('.', '-');
-        const markdownSuffix = '.md';
+        const fileName = title.substring(0, title.length - 9).replace('_', '-').replace(' - ', '-').replace('.', '-') + '.md';
         const postMarkdown = toMarkdown(postHtmlContent);
-        console.log('Writing file: posts/' + fileName + markdownSuffix);
-        fs.writeFileSync("posts/" + fileName + markdownSuffix, postMarkdown);
+        console.log('Writing file: posts/' + fileName);
+        fs.writeFileSync("posts/" + fileName, postMarkdown);
     }
 });
 
@@ -110,3 +72,26 @@ lofterCrawler.queue([ 'http://dudulism.linesh.tw/post/1d7a1323_ba61374',
   'http://dudulism.linesh.tw/post/1d7a1323_8944de0',
   'http://dudulism.linesh.tw/post/1d7a1323_8944de1',
   'http://dudulism.linesh.tw/post/1d7a1323_8944de2' ])
+// These links are crawled someone how by the following scripts:
+
+const crawledPages = [];
+new Crawler({
+    maxConnections : 10,
+    callback : function (error, result, $) {
+        $('a').each(function(index, link) {
+            let toQueueUrl = $(link).attr('href');
+
+            if (toQueueUrl.includes('?page=') && !crawledPages.includes(toQueueUrl)) {
+                crawledPages.push(toQueueUrl);
+                lofterCrawler.queue(['http://dudulism.linesh.tw/' + toQueueUrl]);
+                return ;
+            }
+
+            if (/http:\/\/dudulism\.linesh\.tw\/post\/[a-z0-9]{8}_[a-z0-9]{7}/.test(toQueueUrl)) {
+                if (links.indexOf(toQueueUrl) === -1) {
+                    links.push(toQueueUrl);
+                }
+            }
+        })
+    }
+});
