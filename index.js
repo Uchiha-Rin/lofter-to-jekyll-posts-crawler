@@ -47,8 +47,11 @@ const lofterCrawler = new Crawler({
     callback : function (error, result, $) {
         const postHtmlContent = $('div.ctc').html();
         const title = $('title').text();
+        const fileName = title.substring(0, title.length - 9).replace('_', '-').replace(' - ', '-').replace('.', '-');
+        const markdownSuffix = '.md';
         const postMarkdown = toMarkdown(postHtmlContent);
-        fs.writeFileSync("posts/" + title.substring(0, title.length - 9) + ".md", postMarkdown);
+        console.log('Writing file: posts/' + fileName + markdownSuffix);
+        fs.writeFileSync("posts/" + fileName + markdownSuffix, postMarkdown);
     }
 });
 
